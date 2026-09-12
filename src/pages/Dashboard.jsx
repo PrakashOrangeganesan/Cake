@@ -136,7 +136,7 @@ export default function Dashboard() {
                 <Box className="trend-badge"><ArrowUpward fontSize="small" /> Live</Box>
               </Box>
               <Box className="bar-chart" aria-label="Revenue for the last six months">
-                {chartData.map(item => <Box className="bar-column" key={item.label}><Typography className="bar-value">{item.value ? `₹${Math.round(item.value / 1000)}k` : ''}</Typography><Box className="bar-track"><Box className="bar-fill" sx={{ height: `${item.height}%` }} /></Box><Typography className="bar-label">{item.label}</Typography></Box>)}
+                {chartData.map(item => <Box className="bar-column" key={item.label}><Typography className="bar-value">{item.value ? `₹${new Intl.NumberFormat('en-IN').format(Math.round(item.value))}` : ''}</Typography><Box className="bar-track"><Box className="bar-fill" sx={{ height: `${item.height}%` }} /></Box><Typography className="bar-label">{item.label}</Typography></Box>)}
               </Box>
             </CardContent>
           </Card>

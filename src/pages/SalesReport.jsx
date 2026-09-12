@@ -145,7 +145,13 @@ export default function SalesReport() {
             return <Box className="mobile-record" key={x.order_id}>
               <Box className="mobile-record-topline"><Box><Typography className="mobile-record-eyebrow">{x.order_no}</Typography><Typography className="mobile-record-title">{x.cake_name}</Typography></Box><StatusPill status={x.status} /></Box>
               <Typography className="mobile-record-customer">{x.customer_name} <span>·</span> {x.mobile_number}</Typography>
-              <Box className="mobile-record-grid mobile-report-grid"><RecordField label="Ordered" value={x.order_date} /><RecordField label="Planned delivery" value={x.delivery_date} /><RecordField label="Order value" value={`₹ ${Number(x.price || 0).toFixed(2)}`} /><RecordField label="Actual sale value" value={bill ? `₹ ${Number(bill.actual_price || 0).toFixed(2)}` : '—'} /></Box>
+              <Box className="mobile-record-grid mobile-report-grid">
+                <RecordField label="Ordered" value={x.order_date} />
+                <RecordField label="Planned delivery" value={x.delivery_date} />
+                <RecordField label="Actual delivery" value={bill?.actual_delivery_date || '—'} />
+                <RecordField label="Order value" value={`₹ ${Number(x.price || 0).toFixed(2)}`} />
+                <RecordField label="Actual sale" value={bill ? `₹ ${Number(bill.actual_price || 0).toFixed(2)}` : '—'} />
+              </Box>
             </Box>
           })}
           {!rows.length && <Box className="mobile-empty">Run a search to view the report.</Box>}

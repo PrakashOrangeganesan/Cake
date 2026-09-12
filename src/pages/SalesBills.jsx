@@ -283,14 +283,51 @@ export default function SalesBills() {
             </TextField>
 
             {selected && (
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, borderColor: '#e8ddd3', background: '#fffaf7' }}>
-                <Typography sx={{ fontWeight: 800, mb: 1, color: 'var(--ink)' }}>Order Details</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Customer: {selected.customer_name}</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Mobile: {selected.mobile_number}</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Cake: {selected.cake_name}</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Order Date: {selected.order_date}</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Planned Delivery: {selected.delivery_date}</Typography>
-                <Typography sx={{ color: 'var(--warm-gray)' }}>Order Price: ₹ {Number(selected.price).toFixed(2)}</Typography>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 1,
+                  borderRadius: 2,
+                  borderColor: '#f1e1d8',
+                  background: '#fffaf7',
+                  boxShadow: 'none'
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 0.75, mb: 0.9 }}>
+                  <Typography sx={{ fontWeight: 800, color: 'var(--ink)', fontSize: 13 }}>Order Details</Typography>
+                  <Box component="span" sx={{ px: 0.75, py: 0.2, borderRadius: 999, background: '#fff1ee', color: '#a24d3b', fontSize: 8, fontWeight: 800, letterSpacing: 0.08, textTransform: 'uppercase' }}>
+                    {selected.status}
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' }, gap: 0.65 }}>
+                  {[
+                    ['Customer', selected.customer_name],
+                    ['Mobile', selected.mobile_number],
+                    ['Cake', selected.cake_name],
+                    ['Order Date', selected.order_date],
+                    ['Planned Delivery', selected.delivery_date],
+                    ['Order Price', `₹ ${Number(selected.price).toFixed(2)}`]
+                  ].map(([label, value]) => (
+                    <Box
+                      key={label}
+                      sx={{
+                        p: 0.8,
+                        borderRadius: 1.5,
+                        border: '1px solid #f2e4dc',
+                        background: '#fff',
+                        minHeight: 52
+                      }}
+                    >
+                      <Typography sx={{ color: 'var(--warm-gray)', fontSize: 8.5, fontWeight: 800, letterSpacing: 0.08, textTransform: 'uppercase', mb: 0.2 }}>
+                        {label}
+                      </Typography>
+                      <Typography sx={{ color: 'var(--ink)', fontSize: 11.5, fontWeight: 700, lineHeight: 1.25, wordBreak: 'break-word' }}>
+                        {value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
               </Paper>
             )}
 

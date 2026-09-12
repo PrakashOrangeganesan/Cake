@@ -237,7 +237,12 @@ function ProtectedLayout({ session }) {
             onClick={() => setMobileOpen(false)}
           >
             {item.icon}
-            <Typography component="span">{item.text === 'Cake Orders' ? 'Orders' : item.text.replace('Sales ', '')}</Typography>
+            <Typography component="span">{
+              item.text === 'Cake Orders' ? 'Orders' :
+              item.text === 'Sales Bills' ? 'Bills' :
+              item.text === 'Sales Report' ? 'Report' :
+              item.text
+            }</Typography>
           </Box>
         ))}
       </Box>
