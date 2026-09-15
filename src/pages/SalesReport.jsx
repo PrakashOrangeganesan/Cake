@@ -38,6 +38,7 @@ export default function SalesReport() {
   const [to, setTo] = useState(today())
   const [rows, setRows] = useState([])
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   async function search() {
     setError('')
@@ -63,10 +64,16 @@ export default function SalesReport() {
     else setRows(data || [])
   }
 
-  const totalOrder = rows.reduce((s, x) => s + Number(x.price || 0), 0)
-  const totalActual = rows.reduce((s, x) => s + Number(getBill(x)?.actual_price || 0), 0)
-  const delivered = rows.filter(x => x.status === 'Delivered').length
-  const pending = rows.filter(x => x.status === 'Pending').length
+  const filteredRows = rows.filter(row => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return true
+    return (row.customer_name || '').toLowerCase().includes(term)
+  })
+
+  const totalOrder = filteredRows.reduce((s, x) => s + Number(x.price || 0), 0)
+  const totalActual = filteredRows.reduce((s, x) => s + Number(getBill(x)?.actual_price || 0), 0)
+  const delivered = filteredRows.filter(x => x.status === 'Delivered').length
+  const pending = filteredRows.filter(x => x.status === 'Pending').length
 
   return (
     <Box className="cake-page">
@@ -83,6 +90,12 @@ export default function SalesReport() {
         <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
           <TextField label="From Date" type="date" value={from} onChange={e => setFrom(e.target.value)} slotProps={{ inputLabel: { shrink: true } }} sx={inputStyle} />
           <TextField label="To Date" type="date" value={to} onChange={e => setTo(e.target.value)} slotProps={{ inputLabel: { shrink: true } }} sx={inputStyle} />
+          <TextField
+            label="Customer Name"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            sx={inputStyle}
+          />
           <Button
             variant="contained"
             startIcon={<Search />}
@@ -109,7 +122,7 @@ export default function SalesReport() {
         <Grid item xs={12} sm={6} md={4} lg={2.3}>
           <Paper sx={{ p: 2.25, borderRadius: 3, border: '1px solid var(--cake-border)', background: '#fff' }}>
             <Typography sx={{ color: 'var(--warm-gray)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.8 }}>Orders</Typography>
-            <Typography sx={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--ink)', mt: 1 }}>{rows.length}</Typography>
+            <Typography sx={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--ink)', mt: 1 }}>{filteredRows.length}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={2.3}>
@@ -140,7 +153,7 @@ export default function SalesReport() {
 
       <Paper sx={{ overflow: 'auto', borderRadius: 3, border: '1px solid var(--cake-border)', boxShadow: '0 12px 24px rgba(61,31,14,0.04)' }}>
         <Box className="mobile-records">
-          {rows.map(x => {
+          {filteredRows.map(x => {
             const bill = getBill(x)
             return <Box className="mobile-record" key={x.order_id}>
               <Box className="mobile-record-topline"><Box><Typography className="mobile-record-eyebrow">{x.order_no}</Typography><Typography className="mobile-record-title">{x.cake_name}</Typography></Box><StatusPill status={x.status} /></Box>
@@ -154,7 +167,7 @@ export default function SalesReport() {
               </Box>
             </Box>
           })}
-          {!rows.length && <Box className="mobile-empty">Run a search to view the report.</Box>}
+          {!filteredRows.length && <Box className="mobile-empty">Run a search to view the report.</Box>}
         </Box>
         <Table size="small">
           <TableHead>
@@ -172,7 +185,7 @@ export default function SalesReport() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(x => {
+            {filteredRows.map(x => {
               const bill = getBill(x)
               return (
                 <TableRow key={x.order_id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
@@ -193,7 +206,7 @@ export default function SalesReport() {
                 </TableRow>
               )
             })}
-            {!rows.length && <TableRow><TableCell colSpan={10} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>Run a search to view the report.</TableCell></TableRow>}
+            {!filteredRows.length && <TableRow><TableCell colSpan={10} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>Run a search to view the report.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </Paper>

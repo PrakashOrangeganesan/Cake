@@ -47,6 +47,7 @@ export default function SalesBills() {
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const [viewImage, setViewImage] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => { load() }, [])
 
@@ -179,6 +180,12 @@ export default function SalesBills() {
     else setViewImage(data.signedUrl)
   }
 
+  const filteredBills = bills.filter(row => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return true
+    return (row.orders?.customer_name || '').toLowerCase().includes(term)
+  })
+
   return (
     <Box className="cake-page">
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2.5} gap={2} flexWrap="wrap">
@@ -189,36 +196,49 @@ export default function SalesBills() {
           <Typography sx={{ color: 'var(--warm-gray)' }}>Create the bill against an existing order.</Typography>
         </Box>
 
-        <Button
-          variant="contained"
-          onClick={openNew}
-          sx={{
-            borderRadius: 2.5,
-            background: 'linear-gradient(135deg, #3d1f0e 0%, #7a4a30 100%)',
-            textTransform: 'none',
-            fontWeight: 700,
-            boxShadow: 'none',
-            px: 2,
-            py: 1.1,
-            '&:hover': { background: 'linear-gradient(135deg, #4f2a14 0%, #7a4a30 100%)' }
-          }}
-        >
-          New Sales Bill
-        </Button>
+        <Box display="flex" gap={1.5} alignItems="center" flexWrap="wrap">
+          <TextField
+            size="small"
+            placeholder="Search customer"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            sx={{
+              ...inputStyle,
+              minWidth: { xs: '100%', sm: 220 }
+            }}
+          />
+
+          <Button
+            variant="contained"
+            onClick={openNew}
+            sx={{
+              borderRadius: 2.5,
+              background: 'linear-gradient(135deg, #3d1f0e 0%, #7a4a30 100%)',
+              textTransform: 'none',
+              fontWeight: 700,
+              boxShadow: 'none',
+              px: 2,
+              py: 1.1,
+              '&:hover': { background: 'linear-gradient(135deg, #4f2a14 0%, #7a4a30 100%)' }
+            }}
+          >
+            New Sales Bill
+          </Button>
+        </Box>
       </Box>
 
       {error && !open && <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2 }}>{error}</Alert>}
 
       <Paper sx={{ overflow: 'auto', borderRadius: 3, border: '1px solid var(--cake-border)', boxShadow: '0 12px 24px rgba(61,31,14,0.04)' }}>
         <Box className="mobile-records">
-          {bills.map(row => (
+          {filteredBills.map(row => (
             <Box className="mobile-record" key={row.sales_bill_id}>
               <Box className="mobile-record-topline"><Box><Typography className="mobile-record-eyebrow">{row.bill_no}</Typography><Typography className="mobile-record-title">{row.orders?.cake_name || 'Cake sale'}</Typography></Box><Box>{row.cake_image_path ? <IconButton aria-label="View cake photo" onClick={() => showImage(row.cake_image_path)}><Visibility /></IconButton> : null}<IconButton aria-label="Edit sales bill" onClick={() => openEdit(row)}><Edit /></IconButton></Box></Box>
               <Typography className="mobile-record-customer">{row.orders?.customer_name || 'Unknown customer'} <span>·</span> {row.orders?.order_no || 'No order number'}</Typography>
               <Box className="mobile-record-grid"><RecordField label="Order price" value={`₹ ${Number(row.orders?.price || 0).toFixed(2)}`} /><RecordField label="Delivered" value={row.actual_delivery_date} /><RecordField label="Actual price" value={`₹ ${Number(row.actual_price || 0).toFixed(2)}`} /></Box>
             </Box>
           ))}
-          {!bills.length && <Box className="mobile-empty">No sales bills found.</Box>}
+          {!filteredBills.length && <Box className="mobile-empty">No sales bills found.</Box>}
         </Box>
         <Table size="small">
           <TableHead>
@@ -235,7 +255,7 @@ export default function SalesBills() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bills.map(row => (
+            {filteredBills.map(row => (
               <TableRow key={row.sales_bill_id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
                 <TableCell>{row.bill_no}</TableCell>
                 <TableCell>{row.orders?.order_no}</TableCell>
@@ -252,7 +272,7 @@ export default function SalesBills() {
                 <TableCell><IconButton aria-label="Edit sales bill" onClick={() => openEdit(row)} sx={{ color: 'var(--choco-muted)' }}><Edit /></IconButton></TableCell>
               </TableRow>
             ))}
-            {!bills.length && <TableRow><TableCell colSpan={9} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>No sales bills found.</TableCell></TableRow>}
+            {!filteredBills.length && <TableRow><TableCell colSpan={9} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>No sales bills found.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </Paper>

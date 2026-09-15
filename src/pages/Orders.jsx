@@ -39,6 +39,7 @@ export default function Orders() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => { load() }, [])
 
@@ -108,6 +109,12 @@ export default function Orders() {
     else load()
   }
 
+  const filteredOrders = orders.filter(row => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return true
+    return (row.customer_name || '').toLowerCase().includes(term)
+  })
+
   return (
     <Box className="cake-page">
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2.5} gap={2} flexWrap="wrap">
@@ -120,30 +127,43 @@ export default function Orders() {
           </Typography>
         </Box>
 
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={openNew}
-          sx={{
-            borderRadius: 2.5,
-            background: 'linear-gradient(135deg, #3d1f0e 0%, #7a4a30 100%)',
-            textTransform: 'none',
-            fontWeight: 700,
-            boxShadow: 'none',
-            px: 2,
-            py: 1.1,
-            '&:hover': { background: 'linear-gradient(135deg, #4f2a14 0%, #7a4a30 100%)' }
-          }}
-        >
-          New Order
-        </Button>
+        <Box display="flex" gap={1.5} alignItems="center" flexWrap="wrap">
+          <TextField
+            size="small"
+            placeholder="Search customer"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            sx={{
+              ...inputStyle,
+              minWidth: { xs: '100%', sm: 220 }
+            }}
+          />
+
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={openNew}
+            sx={{
+              borderRadius: 2.5,
+              background: 'linear-gradient(135deg, #3d1f0e 0%, #7a4a30 100%)',
+              textTransform: 'none',
+              fontWeight: 700,
+              boxShadow: 'none',
+              px: 2,
+              py: 1.1,
+              '&:hover': { background: 'linear-gradient(135deg, #4f2a14 0%, #7a4a30 100%)' }
+            }}
+          >
+            New Order
+          </Button>
+        </Box>
       </Box>
 
       {error && !open && <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2 }}>{error}</Alert>}
 
       <Paper sx={{ overflow: 'auto', borderRadius: 3, border: '1px solid var(--cake-border)', boxShadow: '0 12px 24px rgba(61,31,14,0.04)' }}>
         <Box className="mobile-records">
-          {orders.map(row => (
+          {filteredOrders.map(row => (
             <Box className="mobile-record" key={row.order_id}>
               <Box className="mobile-record-topline"><Box><Typography className="mobile-record-eyebrow">{row.order_no}</Typography><Typography className="mobile-record-title">{row.cake_name}</Typography></Box><StatusPill status={row.status} /></Box>
               <Typography className="mobile-record-customer">{row.customer_name} <span>·</span> {row.mobile_number}</Typography>
@@ -151,7 +171,7 @@ export default function Orders() {
               <Box className="mobile-record-actions"><Button startIcon={<Edit />} onClick={() => openEdit(row)}>Edit order</Button><IconButton aria-label="Delete order" color="error" onClick={() => remove(row)}><Delete /></IconButton></Box>
             </Box>
           ))}
-          {!orders.length && <Box className="mobile-empty">No orders found.</Box>}
+          {!filteredOrders.length && <Box className="mobile-empty">No orders found.</Box>}
         </Box>
         <Table size="small">
           <TableHead>
@@ -168,7 +188,7 @@ export default function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map(row => (
+            {filteredOrders.map(row => (
               <TableRow key={row.order_id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
                 <TableCell>{row.order_no}</TableCell>
                 <TableCell>{row.cake_name}</TableCell>
@@ -188,7 +208,7 @@ export default function Orders() {
                 </TableCell>
               </TableRow>
             ))}
-            {!orders.length && <TableRow><TableCell colSpan={9} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>No orders found.</TableCell></TableRow>}
+            {!filteredOrders.length && <TableRow><TableCell colSpan={9} align="center" sx={{ py: 4, color: 'var(--warm-gray)' }}>No orders found.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </Paper>
