@@ -238,6 +238,7 @@ function ProtectedLayout({ session }) {
           >
             {item.icon}
             <Typography component="span">{
+              item.text === 'Dashboard' ? 'Home' :
               item.text === 'Cake Orders' ? 'Orders' :
               item.text === 'Sales Bills' ? 'Bills' :
               item.text === 'Sales Report' ? 'Report' :

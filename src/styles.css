@@ -76,7 +76,7 @@ img {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.01em;
-  line-height: 1.1;
+  line-height: 1.15;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -88,13 +88,36 @@ img {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  width: 100%;
   min-width: 0;
-  padding: 6px 4px 7px;
+  min-height: 56px;
+  padding: 4px 4px 5px;
   border-radius: 14px;
   color: var(--warm-gray);
+  text-align: center;
   text-decoration: none;
   transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  line-height: 1;
+  text-rendering: optimizeLegibility;
+}
+
+.mobile-nav-item > svg,
+.mobile-nav-item .MuiSvgIcon-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 auto;
+  transform: translateY(0);
+}
+
+.mobile-nav-item span {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  align-self: center;
 }
 
 .cake-card {
@@ -456,17 +479,34 @@ img {
   }
 
   .mobile-nav-item {
-    gap: 4px;
-    padding: 7px 4px 6px;
+    gap: 3px;
+    min-height: 58px;
+    padding: 5px 4px 4px;
     border-radius: 16px;
     color: var(--warm-gray);
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
+    justify-content: center;
+    align-items: center;
   }
 
-  .mobile-nav-item svg {
+  .mobile-nav-item svg,
+  .mobile-nav-item .MuiSvgIcon-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
     font-size: 20px;
+    line-height: 1;
+  }
+
+  .mobile-nav-item span {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    align-self: center;
   }
 
   .mobile-nav-item.active {
